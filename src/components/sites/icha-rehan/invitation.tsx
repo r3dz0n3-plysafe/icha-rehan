@@ -527,55 +527,59 @@ export function Invitation({ guest }: { guest: string }) {
                   const waUrl = `https://wa.me/6281314415682?text=${encodeURIComponent(msg)}`;
 
                   setRsvpSubmitting(true);
-                  // Simulates Elementor AJAX form submission interval (1.5s) then opens WhatsApp
+                  // Simulates Elementor AJAX form submission interval (1.2s)
                   window.setTimeout(() => {
                     setRsvpSent(true);
                     setRsvpSubmitting(false);
+                    // Open WhatsApp window after a short delay
                     window.setTimeout(() => {
                       window.open(waUrl, "_blank");
-                    }, 500);
+                    }, 600);
                   }, 1200);
                 }}
               >
-                <label htmlFor="rsvp-name" className={lbl}>Nama</label>
-                <input id="rsvp-name" name="name" required placeholder="Masukkan nama" defaultValue={guest} className={`${field} px-4 py-2`} />
-                <label htmlFor="rsvp-status" className={`${lbl} mt-[10px]`}>Konfirmasi Kehadiran</label>
-                <div className="relative">
-                  <select id="rsvp-status" name="attend" className={`${field} py-[5px] pr-5 pl-[14px]`}>
-                    <option className="text-black" value="Iya, Saya akan datang">Iya, Saya akan datang</option>
-                    <option className="text-black" value="Maaf, Saya tidak bisa datang">Maaf, Saya tidak bisa datang</option>
-                  </select>
-                  <svg viewBox="0 0 571.4 571.4" width="11" height="11" fill="currentColor" aria-hidden className="pointer-events-none absolute top-[14.3px] right-[10px] overflow-visible"><path d={EICON_CARET_DOWN} /></svg>
-                </div>
-                <label htmlFor="rsvp-guests" className={`${lbl} mt-[10px]`}>Jumlah Tamu</label>
-                <div className="relative">
-                  <select id="rsvp-guests" name="nog" defaultValue="1" className={`${field} py-[5px] pr-5 pl-[14px]`}>
-                    <option className="text-black" value="0">0</option>
-                    <option className="text-black" value="1">1</option>
-                    <option className="text-black" value="2">2</option>
-                  </select>
-                  <svg viewBox="0 0 571.4 571.4" width="11" height="11" fill="currentColor" aria-hidden className="pointer-events-none absolute top-[14.3px] right-[10px] overflow-visible"><path d={EICON_CARET_DOWN} /></svg>
-                </div>
-                {rsvpSent && (
-                  <div role="alert" className="elementor-message elementor-message-success mt-3 text-left text-[14px] text-[#5cb85c]">
+                {!rsvpSent ? (
+                  <div className="ele-extensions-hide-form">
+                    <label htmlFor="rsvp-name" className={lbl}>Nama</label>
+                    <input id="rsvp-name" name="name" required placeholder="Masukkan nama" defaultValue={guest} className={`${field} px-4 py-2`} />
+                    <label htmlFor="rsvp-status" className={`${lbl} mt-[10px]`}>Konfirmasi Kehadiran</label>
+                    <div className="relative">
+                      <select id="rsvp-status" name="attend" className={`${field} py-[5px] pr-5 pl-[14px]`}>
+                        <option className="text-black" value="Iya, Saya akan datang">Iya, Saya akan datang</option>
+                        <option className="text-black" value="Maaf, Saya tidak bisa datang">Maaf, Saya tidak bisa datang</option>
+                      </select>
+                      <svg viewBox="0 0 571.4 571.4" width="11" height="11" fill="currentColor" aria-hidden className="pointer-events-none absolute top-[14.3px] right-[10px] overflow-visible"><path d={EICON_CARET_DOWN} /></svg>
+                    </div>
+                    <label htmlFor="rsvp-guests" className={`${lbl} mt-[10px]`}>Jumlah Tamu</label>
+                    <div className="relative">
+                      <select id="rsvp-guests" name="nog" defaultValue="1" className={`${field} py-[5px] pr-5 pl-[14px]`}>
+                        <option className="text-black" value="0">0</option>
+                        <option className="text-black" value="1">1</option>
+                        <option className="text-black" value="2">2</option>
+                      </select>
+                      <svg viewBox="0 0 571.4 571.4" width="11" height="11" fill="currentColor" aria-hidden className="pointer-events-none absolute top-[14.3px] right-[10px] overflow-visible"><path d={EICON_CARET_DOWN} /></svg>
+                    </div>
+                    <div className="mt-[10px] flex justify-end">
+                      <button
+                        type="submit"
+                        disabled={rsvpSubmitting}
+                        className="h-10 cursor-pointer rounded-[20px] border-[0.8px] border-[#f3f3f3] px-5 text-[13px] leading-[13px] font-medium text-[#f3f3f3] uppercase transition-all duration-300 disabled:opacity-60 flex items-center gap-2"
+                      >
+                        {rsvpSubmitting && (
+                          <svg className="size-3.5 animate-spin text-white" viewBox="0 0 24 24" fill="none">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                          </svg>
+                        )}
+                        {rsvpSubmitting ? "Mengirim..." : "Konfirmasi Kehadiran"}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div role="alert" className="elementor-message elementor-message-success my-2.5 text-left text-[14px] leading-snug font-sans text-white">
                     Your submission was successful.
                   </div>
                 )}
-                <div className="mt-[10px] flex justify-end">
-                  <button
-                    type="submit"
-                    disabled={rsvpSubmitting}
-                    className="h-10 cursor-pointer rounded-[20px] border-[0.8px] border-[#f3f3f3] px-5 text-[13px] leading-[13px] font-medium text-[#f3f3f3] uppercase transition-all duration-300 disabled:opacity-60 flex items-center gap-2"
-                  >
-                    {rsvpSubmitting && (
-                      <svg className="size-3.5 animate-spin text-white" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                      </svg>
-                    )}
-                    {rsvpSubmitting ? "Mengirim..." : "Konfirmasi Kehadiran"}
-                  </button>
-                </div>
               </form>
             </Panel>
 
