@@ -557,8 +557,8 @@ export function Invitation({ guest }: { guest: string }) {
                   <svg viewBox="0 0 571.4 571.4" width="11" height="11" fill="currentColor" aria-hidden className="pointer-events-none absolute top-[14.3px] right-[10px] overflow-visible"><path d={EICON_CARET_DOWN} /></svg>
                 </div>
                 {rsvpSent && (
-                  <div className="mt-3 rounded border border-[#28a745]/40 bg-[#28a745]/20 p-2.5 text-center text-[13px] text-white">
-                    Konfirmasi berhasil dikirim. Membuka WhatsApp...
+                  <div role="alert" className="elementor-message elementor-message-success mt-3 text-left text-[14px] text-[#5cb85c]">
+                    Your submission was successful.
                   </div>
                 )}
                 <div className="mt-[10px] flex justify-end">
