@@ -512,42 +512,45 @@ export function Invitation({ guest }: { guest: string }) {
               <p className="rv-up mt-[11px] text-[14px] leading-[19px] md:mt-[10px] md:text-[15px]">
                 Bagi tamu undangan yang akan hadir di acara pernikahan kami silahkan kirimkan konfirmasi kehadiran dengan mengisi form berikut :
               </p>
-              {rsvpSent ? (
-                <p className="rv-up mt-5 text-[15px] leading-[19px]">Terima kasih atas konfirmasinya!</p>
-              ) : (
-                <form
-                  className="rv-up mt-5 w-full"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    setRsvpSent(true);
-                  }}
-                >
-                  <label htmlFor="rsvp-name" className={lbl}>Nama</label>
-                  <input id="rsvp-name" required placeholder="Masukkan nama" defaultValue={guest} className={`${field} px-4 py-2`} />
-                  <label htmlFor="rsvp-status" className={`${lbl} mt-[10px]`}>Konfirmasi Kehadiran</label>
-                  <div className="relative">
-                    <select id="rsvp-status" className={`${field} py-[5px] pr-5 pl-[14px]`}>
-                      <option className="text-black">Iya, Saya akan datang</option>
-                      <option className="text-black">Maaf, Saya tidak bisa datang</option>
-                    </select>
-                    <svg viewBox="0 0 571.4 571.4" width="11" height="11" fill="currentColor" aria-hidden className="pointer-events-none absolute top-[14.3px] right-[10px] overflow-visible"><path d={EICON_CARET_DOWN} /></svg>
-                  </div>
-                  <label htmlFor="rsvp-guests" className={`${lbl} mt-[10px]`}>Jumlah Tamu</label>
-                  <div className="relative">
-                    <select id="rsvp-guests" className={`${field} py-[5px] pr-5 pl-[14px]`}>
-                      <option className="text-black">0</option>
-                      <option className="text-black">1</option>
-                      <option className="text-black">2</option>
-                    </select>
-                    <svg viewBox="0 0 571.4 571.4" width="11" height="11" fill="currentColor" aria-hidden className="pointer-events-none absolute top-[14.3px] right-[10px] overflow-visible"><path d={EICON_CARET_DOWN} /></svg>
-                  </div>
-                  <div className="mt-[10px] flex justify-end">
-                    <button className="h-10 cursor-pointer rounded-[20px] border-[0.8px] border-[#f3f3f3] px-5 text-[13px] leading-[13px] font-medium text-[#f3f3f3] uppercase transition-all duration-300">
-                      Konfirmasi Kehadiran
-                    </button>
-                  </div>
-                </form>
-              )}
+              <form
+                className="rv-up mt-5 w-full"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const form = e.currentTarget;
+                  const f = new FormData(form);
+                  const name = String(f.get("name") || guest || "").trim();
+                  const attend = String(f.get("attend") || "Iya, Saya akan datang");
+                  const nog = String(f.get("nog") || "1");
+                  const msg = `Hai, Saya ${name} ingin konfirmasi kehadiran pada undangan pernikahan digital bahwa ${attend} (${nog} orang). .Terima Kasih`;
+                  const waUrl = `https://wa.me/6281314415682?text=${encodeURIComponent(msg)}`;
+                  window.open(waUrl, "_blank");
+                }}
+              >
+                <label htmlFor="rsvp-name" className={lbl}>Nama</label>
+                <input id="rsvp-name" name="name" required placeholder="Masukkan nama" defaultValue={guest} className={`${field} px-4 py-2`} />
+                <label htmlFor="rsvp-status" className={`${lbl} mt-[10px]`}>Konfirmasi Kehadiran</label>
+                <div className="relative">
+                  <select id="rsvp-status" name="attend" className={`${field} py-[5px] pr-5 pl-[14px]`}>
+                    <option className="text-black" value="Iya, Saya akan datang">Iya, Saya akan datang</option>
+                    <option className="text-black" value="Maaf, Saya tidak bisa datang">Maaf, Saya tidak bisa datang</option>
+                  </select>
+                  <svg viewBox="0 0 571.4 571.4" width="11" height="11" fill="currentColor" aria-hidden className="pointer-events-none absolute top-[14.3px] right-[10px] overflow-visible"><path d={EICON_CARET_DOWN} /></svg>
+                </div>
+                <label htmlFor="rsvp-guests" className={`${lbl} mt-[10px]`}>Jumlah Tamu</label>
+                <div className="relative">
+                  <select id="rsvp-guests" name="nog" defaultValue="1" className={`${field} py-[5px] pr-5 pl-[14px]`}>
+                    <option className="text-black" value="0">0</option>
+                    <option className="text-black" value="1">1</option>
+                    <option className="text-black" value="2">2</option>
+                  </select>
+                  <svg viewBox="0 0 571.4 571.4" width="11" height="11" fill="currentColor" aria-hidden className="pointer-events-none absolute top-[14.3px] right-[10px] overflow-visible"><path d={EICON_CARET_DOWN} /></svg>
+                </div>
+                <div className="mt-[10px] flex justify-end">
+                  <button type="submit" className="h-10 cursor-pointer rounded-[20px] border-[0.8px] border-[#f3f3f3] px-5 text-[13px] leading-[13px] font-medium text-[#f3f3f3] uppercase transition-all duration-300">
+                    Konfirmasi Kehadiran
+                  </button>
+                </div>
+              </form>
             </Panel>
 
             {/* Gallery */}
