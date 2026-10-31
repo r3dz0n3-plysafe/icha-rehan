@@ -361,6 +361,7 @@ export function Invitation({ guest }: { guest: string }) {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [wishes, setWishes] = useState<Wish[]>([]);
+  const [rsvpSubmitting, setRsvpSubmitting] = useState(false);
   const [rsvpSent, setRsvpSent] = useState(false);
   const left = useCountdown();
 
@@ -516,6 +517,7 @@ export function Invitation({ guest }: { guest: string }) {
                 className="rv-up mt-5 w-full"
                 onSubmit={(e) => {
                   e.preventDefault();
+                  if (rsvpSubmitting) return;
                   const form = e.currentTarget;
                   const f = new FormData(form);
                   const name = String(f.get("name") || guest || "").trim();
@@ -523,7 +525,16 @@ export function Invitation({ guest }: { guest: string }) {
                   const nog = String(f.get("nog") || "1");
                   const msg = `Hai, Saya ${name} ingin konfirmasi kehadiran pada undangan pernikahan digital bahwa ${attend} (${nog} orang). .Terima Kasih`;
                   const waUrl = `https://wa.me/6281314415682?text=${encodeURIComponent(msg)}`;
-                  window.open(waUrl, "_blank");
+
+                  setRsvpSubmitting(true);
+                  // Simulates Elementor AJAX form submission interval (1.5s) then opens WhatsApp
+                  window.setTimeout(() => {
+                    setRsvpSent(true);
+                    setRsvpSubmitting(false);
+                    window.setTimeout(() => {
+                      window.open(waUrl, "_blank");
+                    }, 500);
+                  }, 1200);
                 }}
               >
                 <label htmlFor="rsvp-name" className={lbl}>Nama</label>
@@ -545,9 +556,24 @@ export function Invitation({ guest }: { guest: string }) {
                   </select>
                   <svg viewBox="0 0 571.4 571.4" width="11" height="11" fill="currentColor" aria-hidden className="pointer-events-none absolute top-[14.3px] right-[10px] overflow-visible"><path d={EICON_CARET_DOWN} /></svg>
                 </div>
+                {rsvpSent && (
+                  <div className="mt-3 rounded border border-[#28a745]/40 bg-[#28a745]/20 p-2.5 text-center text-[13px] text-white">
+                    Konfirmasi berhasil dikirim. Membuka WhatsApp...
+                  </div>
+                )}
                 <div className="mt-[10px] flex justify-end">
-                  <button type="submit" className="h-10 cursor-pointer rounded-[20px] border-[0.8px] border-[#f3f3f3] px-5 text-[13px] leading-[13px] font-medium text-[#f3f3f3] uppercase transition-all duration-300">
-                    Konfirmasi Kehadiran
+                  <button
+                    type="submit"
+                    disabled={rsvpSubmitting}
+                    className="h-10 cursor-pointer rounded-[20px] border-[0.8px] border-[#f3f3f3] px-5 text-[13px] leading-[13px] font-medium text-[#f3f3f3] uppercase transition-all duration-300 disabled:opacity-60 flex items-center gap-2"
+                  >
+                    {rsvpSubmitting && (
+                      <svg className="size-3.5 animate-spin text-white" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                      </svg>
+                    )}
+                    {rsvpSubmitting ? "Mengirim..." : "Konfirmasi Kehadiran"}
                   </button>
                 </div>
               </form>
