@@ -4,6 +4,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Match the source's Elementor breakpoints: mobile ≤767px, tablet 768–1024px, desktop ≥1025px */
+@theme {
+  --breakpoint-lg: 64.0625rem;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -128,3 +133,50 @@
     @apply font-sans;
   }
 }
+@font-face {
+  font-family: "Anlg Uzifru";
+  src: url("/sites/icha-rehan/anlg-uzifru.woff2") format("woff2");
+  font-display: swap;
+}
+.font-display { font-family: "Anlg Uzifru", serif; }
+@layer base {
+  button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
+}
+body { font-family: "Times New Roman", Times, serif; }
+.font-cormorant { font-family: var(--font-cormorant), "Cormorant", serif; }
+/* countdown digits: the source self-hosts Noto Serif Display ExtraCondensed (OFL) as "Noto Extra" */
+@font-face {
+  font-family: "Noto Extra";
+  src: url("/sites/icha-rehan/noto-serif-display-extracondensed.ttf") format("truetype");
+  font-display: swap;
+}
+.font-noto { font-family: "Noto Extra", sans-serif; }
+/* layered so tracking-* utilities (e.g. the hero's -1.6px) can override it */
+@layer components {
+  .font-display { letter-spacing: -0.4px; }
+}
+
+/* Entrance animations mirroring the source: fadeIn (slow, 2s), fadeInUp / fadeInDown / zoomIn (1.25s) */
+@keyframes rv-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rv-fade-in-up { from { opacity: 0; transform: translate3d(0, 100%, 0); } to { opacity: 1; transform: none; } }
+@keyframes rv-fade-in-down { from { opacity: 0; transform: translate3d(0, -100%, 0); } to { opacity: 1; transform: none; } }
+@keyframes rv-zoom-in { from { opacity: 0; transform: scale3d(0.3, 0.3, 0.3); } 50% { opacity: 1; } to { opacity: 1; transform: none; } }
+.rv-fade, .rv-up, .rv-down, .rv-zoom { opacity: 0; }
+.reveal.in .rv-fade { animation: rv-fade-in 2s both; }
+.reveal.in .rv-up { animation: rv-fade-in-up 1.25s both; }
+.reveal.in .rv-down { animation: rv-fade-in-down 1.25s both; }
+.reveal.in .rv-zoom { animation: rv-zoom-in 1.25s both; }
+@media (max-width: 1024px) {
+  .reveal.in .rv-down { animation-name: rv-fade-in-up; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rv-fade, .rv-up, .rv-down, .rv-zoom { opacity: 1; }
+  .reveal.in .rv-fade, .reveal.in .rv-up, .reveal.in .rv-down, .reveal.in .rv-zoom { animation: none; }
+}
+
+/* cover texts: Elementor fadeIn, 2s, on page load */
+.cover-fade { animation: rv-fade-in 2s both; }
+@media (prefers-reduced-motion: reduce) { .cover-fade { animation: none; } }
+.cover-leave { animation: rv-fade-in-down 1.2s ease reverse both; }
+@media (prefers-reduced-motion: reduce) { .cover-leave { animation: none; } }
+
