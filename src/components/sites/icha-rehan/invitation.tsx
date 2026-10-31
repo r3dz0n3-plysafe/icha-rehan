@@ -151,7 +151,7 @@ function Panel({
   return (
     <section
       ref={ref}
-      className={`relative flex min-h-screen snap-start flex-col overflow-hidden px-5 py-10 ${className}`}
+      className={`relative flex min-h-screen min-h-[100dvh] w-full snap-start flex-col overflow-hidden px-5 py-10 ${className}`}
     >
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${A}/${img}.webp)` }} />
       <div
@@ -397,18 +397,18 @@ export function Invitation({ guest }: { guest: string }) {
         {!open && (
         // source: a fixed-height content block (681 / 778 / 739px) centred in the viewport; when the
         // viewport is shorter the block overflows evenly, and the background grows with it
-        <section className={`flex h-screen flex-col items-center justify-center text-center ${leaving ? "cover-leave pointer-events-none fixed top-0 right-0 z-30 w-full lg:w-[30%]" : "relative"}`}>
+        <section className={`flex h-screen h-[100dvh] w-full flex-col items-center justify-center text-center overflow-hidden ${leaving ? "cover-leave pointer-events-none fixed top-0 right-0 z-30 w-full lg:w-[30%]" : "relative"}`}>
           <div
-            className="absolute inset-x-0 top-1/2 h-[max(100%,681px)] -translate-y-1/2 bg-cover bg-center md:h-[max(100%,778px)] lg:h-[max(100%,739px)]"
+            className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${A}/F915B11E-CC41-4ED9-8D6E-C8401D9A6EE4-Zah-05.webp)` }}
           />
           {/* source: section ::before overlay, #000 at opacity .2 */}
           <div className="absolute inset-0 bg-black opacity-20" />
-          <div className="relative flex h-[681px] w-full shrink-0 flex-col items-center justify-end pb-[50px] md:h-[778px] md:pb-10 lg:h-[739px] lg:pb-5">
-          <div className="absolute inset-x-0 top-[30px] md:top-5 lg:top-0">
+          <div className="relative flex h-full max-h-[778px] w-full shrink-0 flex-col items-center justify-end pb-8 sm:pb-12 md:pb-10 lg:h-[739px] lg:pb-5">
+          <div className="absolute inset-x-0 top-6 sm:top-[30px] md:top-5 lg:top-0">
             <p className="cover-fade font-cormorant text-[15px] leading-[15px] font-semibold uppercase md:text-[18px] md:leading-[18px] lg:text-base lg:leading-4">The Wedding of</p>
-            <h1 className="cover-fade font-display mt-[25px] text-[40px] leading-8 md:text-[50px] md:leading-[50px] lg:text-[45px] lg:leading-[45px]">Icha &amp; Rehan</h1>
-            <p className="cover-fade mt-[25px] text-[13px] leading-[13px] uppercase md:text-[16px] md:leading-4 lg:text-[14px] lg:leading-[14px]">Minggu, 08 November 2026</p>
+            <h1 className="cover-fade font-display mt-[15px] sm:mt-[25px] text-[36px] sm:text-[40px] leading-8 md:text-[50px] md:leading-[50px] lg:text-[45px] lg:leading-[45px]">Icha &amp; Rehan</h1>
+            <p className="cover-fade mt-[15px] sm:mt-[25px] text-[13px] leading-[13px] uppercase md:text-[16px] md:leading-4 lg:text-[14px] lg:leading-[14px]">Minggu, 08 November 2026</p>
           </div>
           <p className="cover-fade text-[13px] leading-[13px] md:text-[14px] md:leading-[14px] lg:text-[15px] lg:leading-[15px]">Yth. Bapak/Ibu/Saudara/i</p>
           <p className="mt-5 font-[family-name:var(--font-bitter)] text-[17px] leading-[17px] font-medium md:text-[19px] md:leading-[19px] lg:text-[17px] lg:leading-[17px]">{guest}</p>

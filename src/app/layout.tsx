@@ -1,6 +1,13 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Amiri, Bitter, Cormorant, Cormorant_Upright, Geist, Geist_Mono, Plus_Jakarta_Sans, Roboto } from "next/font/google";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
