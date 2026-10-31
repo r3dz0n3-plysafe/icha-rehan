@@ -135,7 +135,8 @@
 }
 @font-face {
   font-family: "Anlg Uzifru";
-  src: url("/sites/icha-rehan/anlg-uzifru.woff2") format("woff2");
+  src: url("/icha-rehan/sites/icha-rehan/anlg-uzifru.woff2") format("woff2"),
+       url("/sites/icha-rehan/anlg-uzifru.woff2") format("woff2");
   font-display: swap;
 }
 .font-display { font-family: "Anlg Uzifru", serif; }
@@ -147,7 +148,8 @@ body { font-family: "Times New Roman", Times, serif; }
 /* countdown digits: the source self-hosts Noto Serif Display ExtraCondensed (OFL) as "Noto Extra" */
 @font-face {
   font-family: "Noto Extra";
-  src: url("/sites/icha-rehan/noto-serif-display-extracondensed.ttf") format("truetype");
+  src: url("/icha-rehan/sites/icha-rehan/noto-serif-display-extracondensed.ttf") format("truetype"),
+       url("/sites/icha-rehan/noto-serif-display-extracondensed.ttf") format("truetype");
   font-display: swap;
 }
 .font-noto { font-family: "Noto Extra", sans-serif; }
