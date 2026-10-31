@@ -6,6 +6,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: "#C5A880", // Elegant warm wedding gold border on Discord embed
 };
 
 
@@ -85,9 +86,10 @@ export const metadata: Metadata = {
     siteName: "The Wedding of Icha & Rehan",
     images: [
       {
-        url: "https://r3dz0n3-plysafe.github.io/icha-rehan/sites/icha-rehan/Salinan-FGM-8-Zah-05.webp",
+        url: "https://r3dz0n3-plysafe.github.io/icha-rehan/sites/icha-rehan/og-image.png",
         width: 1200,
         height: 630,
+        type: "image/png",
         alt: "The Wedding of Icha & Rehan",
       },
     ],
@@ -100,7 +102,7 @@ export const metadata: Metadata = {
     description:
       "Minggu, 08 November 2026 - We invite you to celebrate our wedding day.",
     images: [
-      "https://r3dz0n3-plysafe.github.io/icha-rehan/sites/icha-rehan/Salinan-FGM-8-Zah-05.webp",
+      "https://r3dz0n3-plysafe.github.io/icha-rehan/sites/icha-rehan/og-image.png",
     ],
   },
   robots: {
