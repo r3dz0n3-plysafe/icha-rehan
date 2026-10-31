@@ -92,6 +92,8 @@ const FA_CHEVRON_CIRCLE_RIGHT =
   "M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zm113.9 231L234.4 103.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L285.1 256 183.5 357.6c-9.4 9.4-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0L369.9 273c9.4-9.4 9.4-24.6 0-34z";
 // Elementor eicons caret-down (select arrow in the RSVP form)
 const EICON_CARET_DOWN = "M571 393Q571 407 561 418L311 668Q300 679 286 679T261 668L11 418Q0 407 0 393T11 368 36 357H536Q550 357 561 368T571 393Z";
+// Elementor eicon-check (e90e glyph used in elementor-message:before)
+const EICON_CHECK = "M434 754L188 508 244 452 434 642 856 220 912 276 434 754Z";
 const FA_MUSIC =
   "M470.38 1.51L150.41 96A32 32 0 0 0 128 126.51v261.41A139 139 0 0 0 96 384c-53 0-96 28.66-96 64s43 64 96 64 96-28.66 96-64V214.32l256-75v184.61a138.4 138.4 0 0 0-32-3.93c-53 0-96 28.66-96 64s43 64 96 64 96-28.65 96-64V32a32 32 0 0 0-41.62-30.49z";
 const FA_PAUSE_CIRCLE =
@@ -576,8 +578,11 @@ export function Invitation({ guest }: { guest: string }) {
                     </div>
                   </div>
                 ) : (
-                  <div role="alert" className="elementor-message elementor-message-success my-2.5 text-left text-[14px] leading-snug font-sans text-white">
-                    Your submission was successful.
+                  <div role="alert" className="elementor-message elementor-message-success my-2.5 flex items-center text-left text-[14px] leading-snug font-sans text-white">
+                    <svg viewBox="0 0 1000 1000" width="13" height="13" fill="currentColor" aria-hidden className="mr-1.5 shrink-0">
+                      <path d={EICON_CHECK} />
+                    </svg>
+                    <span>Your submission was successful.</span>
                   </div>
                 )}
               </form>
