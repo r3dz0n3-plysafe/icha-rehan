@@ -7,7 +7,9 @@ import { Invitation } from "@/components/sites/icha-rehan/invitation";
 function InvitationContent() {
   const searchParams = useSearchParams();
   const to = searchParams.get("to");
-  return <Invitation guest={to?.trim() || "Tamu Undangan"} />;
+  // Normalize newline characters if passed as literal \n in URL query or URL-encoded newline
+  const formattedGuest = to ? to.replace(/\\n/g, "\n").trim() : "Tamu Undangan";
+  return <Invitation guest={formattedGuest} />;
 }
 
 export default function Home() {

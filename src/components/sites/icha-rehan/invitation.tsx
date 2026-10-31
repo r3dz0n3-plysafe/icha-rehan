@@ -414,7 +414,9 @@ export function Invitation({ guest }: { guest: string }) {
             <p className="cover-fade mt-[15px] sm:mt-[25px] text-[13px] leading-[13px] uppercase md:text-[16px] md:leading-4 lg:text-[14px] lg:leading-[14px]">Minggu, 08 November 2026</p>
           </div>
           <p className="cover-fade text-[13px] leading-[13px] md:text-[14px] md:leading-[14px] lg:text-[15px] lg:leading-[15px]">Yth. Bapak/Ibu/Saudara/i</p>
-          <p className="mt-5 font-[family-name:var(--font-bitter)] text-[17px] leading-[17px] font-medium md:text-[19px] md:leading-[19px] lg:text-[17px] lg:leading-[17px]">{guest}</p>
+          <div className="mt-5 max-w-[85%] px-2">
+            <p className="font-[family-name:var(--font-bitter)] text-[17px] leading-[24px] font-medium whitespace-pre-line md:text-[19px] md:leading-[26px] lg:text-[17px] lg:leading-[24px]">{guest}</p>
+          </div>
           <p className="cover-fade mt-5 w-full text-[13px] leading-[13px] md:text-[14px] md:leading-[14px] lg:text-[15px] lg:leading-[15px]">
             Tanpa mengurangi rasa hormat, kami mengundang anda untuk menghadiri acara pernikahan kami.
           </p>
