@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { fetchWishes, postWish, type Wish } from "@/lib/wishes";
 
 const BASE_PATH = process.env.NODE_ENV === "production" ? "/icha-rehan" : "";
 const A = `${BASE_PATH}/sites/icha-rehan`;
@@ -48,7 +49,6 @@ const events = [
   { title: "Resepsi Nikah", time: "Pukul 11.00 s/d 14.00 WIB" },
 ];
 
-type Wish = { name: string; text: string };
 
 function useCountdown() {
   const [left, setLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
@@ -356,6 +356,26 @@ function Carousel({
   );
 }
 
+const WISH_MAX = 500;
+const WISH_PER_PAGE = 5;
+
+// "1 hari, 16 jam lalu" style relative time (Indonesian)
+function formatAgo(ms: number): string {
+  const min = Math.max(0, Math.floor(ms / 60000));
+  if (min < 1) return "baru saja";
+  if (min < 60) return `${min} menit lalu`;
+  const hours = Math.floor(min / 60);
+  if (hours < 24) return `${hours} jam lalu`;
+  const days = Math.floor(hours / 24);
+  const rest = hours % 24;
+  return `${days} hari${rest ? `, ${rest} jam` : ""} lalu`;
+}
+
+function TimeAgo({ ts }: { ts: number }) {
+  const [now] = useState(() => Date.now());
+  return <span>{formatAgo(now - ts)}</span>;
+}
+
 export function Invitation({ guest }: { guest: string }) {
   const [open, setOpen] = useState(false);
   // the cover slides up and fades out (source: fadeInDown played in reverse, 1.2s) before it unmounts
@@ -363,9 +383,24 @@ export function Invitation({ guest }: { guest: string }) {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [wishes, setWishes] = useState<Wish[]>([]);
+  const [wishSending, setWishSending] = useState(false);
+  const [wishText, setWishText] = useState("");
+  const [wishesOpen, setWishesOpen] = useState(true);
+  const [wishPage, setWishPage] = useState(1);
+  const [wishStatus, setWishStatus] = useState<"idle" | "ok" | "error">("idle");
   const [rsvpSubmitting, setRsvpSubmitting] = useState(false);
   const [rsvpSent, setRsvpSent] = useState(false);
   const left = useCountdown();
+
+  useEffect(() => {
+    let alive = true;
+    fetchWishes()
+      .then((list) => alive && setWishes(list))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   useEffect(() => {
     // no scrolling (and no scrollbar) while the cover is shown
@@ -642,35 +677,88 @@ export function Invitation({ guest }: { guest: string }) {
               <p className="rv-up mt-1 text-[14px] leading-[19px] md:mt-5 md:text-[15px]">Berikan ucapan hangat dan do&apos;a terbaik untuk kami</p>
               {/* same inline structure as the source: 14px/21px wrapper, 16px/24px italic link, icon at -2px */}
               <div className="rv-up mt-[5.6px] px-[15px] py-[6px] text-[14px] leading-[21px] md:mt-5">
-                <span className="font-cormorant text-[16px] leading-6 font-medium italic">
+                <button
+                  type="button"
+                  aria-expanded={wishesOpen}
+                  aria-controls="wishes-list"
+                  onClick={() => setWishesOpen((o) => !o)}
+                  className="font-cormorant cursor-pointer text-[16px] leading-6 font-medium italic"
+                >
                   <Icon d={FA_DOVE} vb="0 0 512 512" w={20} h={16} className="mr-[5px] inline-block align-[-2px]" />{" "}
                   <span>{wishes.length}</span> Comments
-                </span>
+                  <svg viewBox="0 0 571.4 571.4" width="10" height="10" fill="currentColor" aria-hidden className={`ml-2 inline-block transition-transform duration-300 ${wishesOpen ? "rotate-180" : ""}`}><path d={EICON_CARET_DOWN} /></svg>
+                </button>
               </div>
               <form
                 className="rv-up mx-[15px] mt-[17.4px] md:mt-[18px]"
                 onSubmit={(e) => {
                   e.preventDefault();
+                  if (wishSending) return;
                   const form = e.currentTarget;
                   const f = new FormData(form);
-                  setWishes((w) => [{ name: String(f.get("name")), text: String(f.get("text")) }, ...w]);
-                  form.reset();
+                  const name = String(f.get("name")).trim();
+                  const text = String(f.get("text")).trim();
+                  setWishSending(true);
+                  setWishStatus("idle");
+                  postWish(name, text)
+                    .then((wish) => {
+                      setWishes((w) => [wish, ...w]);
+                      setWishStatus("ok");
+                      setWishPage(1);
+                      setWishText("");
+                      form.reset();
+                    })
+                    .catch(() => setWishStatus("error"))
+                    .finally(() => setWishSending(false));
                 }}
               >
-                <input name="name" required maxLength={100} placeholder="Nama" className="block h-[30px] w-full border-[0.8px] border-[#e0dcd1] bg-white/[.43] px-[6px] py-[3px] font-[family-name:var(--font-amiri)] text-[15px] leading-[15px] font-medium text-white outline-none placeholder:text-white/70" />
-                <textarea name="text" required minLength={2} placeholder="Ucapan" className="mt-[10px] block h-[75px] w-full resize-y border-[0.8px] border-[#e0dcd1] bg-white/[.43] px-[6px] py-1 font-[family-name:var(--font-amiri)] text-[15px] leading-[19px] font-medium text-white outline-none placeholder:text-white/70" />
-                <div className="mt-[15px] flex justify-end pr-[9.5px]">
-                  <button className="font-cormorant h-10 rounded-[20px] border-[0.8px] border-[#f3f3f3] px-[30px] text-[15px] leading-[22.5px] cursor-pointer font-medium text-white uppercase italic transition-all duration-300">Kirim</button>
+                <input name="name" required maxLength={100} defaultValue={guest.replace(/\s+/g, " ").trim()} placeholder="Nama" className="block h-[30px] w-full border-[0.8px] border-[#e0dcd1] bg-white/[.43] px-[6px] py-[3px] font-[family-name:var(--font-amiri)] text-[15px] leading-[15px] font-medium text-white outline-none placeholder:text-white/70" />
+                <textarea name="text" required minLength={2} maxLength={WISH_MAX} value={wishText} onChange={(e) => setWishText(e.target.value)} placeholder="Ucapan" className="mt-[10px] block h-[75px] w-full resize-y border-[0.8px] border-[#e0dcd1] bg-white/[.43] px-[6px] py-1 font-[family-name:var(--font-amiri)] text-[15px] leading-[19px] font-medium text-white outline-none placeholder:text-white/70" />
+                <div className="mt-[2px] text-right text-[14px] leading-[18px] text-white/70">{WISH_MAX - wishText.length}</div>
+                <div className="mt-[8px] flex items-center justify-end gap-3 pr-[9.5px]">
+                  {wishStatus === "ok" && <span role="status" className="font-cormorant text-[15px] italic">Terima kasih atas ucapannya!</span>}
+                  {wishStatus === "error" && <span role="alert" className="font-cormorant text-[15px] italic text-red-300">Gagal mengirim, coba lagi.</span>}
+                  <button type="submit" disabled={wishSending} className="font-cormorant h-10 rounded-[20px] border-[0.8px] border-[#f3f3f3] px-[30px] text-[15px] leading-[22.5px] cursor-pointer font-medium text-white uppercase italic transition-all duration-300 disabled:opacity-60">{wishSending ? "Mengirim..." : "Kirim"}</button>
                 </div>
               </form>
-              <ul className="mt-3 max-h-40 space-y-2 overflow-auto text-[13px]">
-                {wishes.map((w, i) => (
-                  <li key={i} className="bg-black/30 p-2">
-                    <p className="font-semibold">{w.name}</p>
-                    <p>{w.text}</p>
-                  </li>
-                ))}
-              </ul>
+              {wishes.length > 0 && (
+                <div
+                  id="wishes-list"
+                  aria-hidden={!wishesOpen}
+                  inert={!wishesOpen}
+                  className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out ${wishesOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                >
+                <div className="overflow-hidden">
+                  <hr className="mt-[18px] border-0 border-t border-white/80" />
+                  <ul className="mt-5 max-h-[max(200px,calc(100svh-520px))] space-y-6 overflow-y-auto overscroll-contain pr-1 text-left [scrollbar-color:rgba(255,255,255,.5)_transparent] [scrollbar-width:thin]">
+                    {wishes.slice((wishPage - 1) * WISH_PER_PAGE, wishPage * WISH_PER_PAGE).map((w) => (
+                      <li key={w.id} className="flex gap-[14px] px-[18px]">
+                        <span aria-hidden className="font-cormorant grid size-9 shrink-0 place-items-center bg-[#1f3a36] text-[16px] font-semibold text-[#c9b27a] uppercase">{w.name.trim().charAt(0)}</span>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-cormorant text-[20px] leading-6 font-semibold italic">{w.name}</p>
+                          {w.ts !== undefined && (
+                            <p className="mt-[6px] flex items-center gap-2 text-[13px] leading-4 text-white/70">
+                              <svg viewBox="0 0 512 512" width="14" height="14" fill="currentColor" aria-hidden><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm57.1 350.1L224.9 294c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h48c6.6 0 12 5.4 12 12v137.7l63.5 46.2c5.4 3.9 6.5 11.4 2.6 16.8l-28.2 38.8c-3.9 5.3-11.4 6.5-16.8 2.6z" /></svg>
+                              <TimeAgo ts={w.ts} />
+                            </p>
+                          )}
+                          <p className="mt-[6px] font-[family-name:var(--font-amiri)] text-[15px] leading-[27px] break-words whitespace-pre-line">{w.text}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  {wishes.length > WISH_PER_PAGE && (
+                    <nav aria-label="Pagination" className="mt-6 flex items-center justify-center gap-4 text-[17px] leading-6 text-white/60">
+                      <button type="button" disabled={wishPage === 1} onClick={() => setWishPage((p) => p - 1)} className="cursor-pointer disabled:cursor-default disabled:opacity-70">← Previous</button>
+                      {Array.from({ length: Math.ceil(wishes.length / WISH_PER_PAGE) }, (_, i) => i + 1).map((n) => (
+                        <button key={n} type="button" onClick={() => setWishPage(n)} aria-current={n === wishPage} className={`cursor-pointer ${n === wishPage ? "font-bold text-[#c9b27a] underline" : ""}`}>{n}</button>
+                      ))}
+                      <button type="button" disabled={wishPage >= Math.ceil(wishes.length / WISH_PER_PAGE)} onClick={() => setWishPage((p) => p + 1)} className="cursor-pointer font-bold text-[#c9b27a] disabled:cursor-default disabled:opacity-70">Next →</button>
+                    </nav>
+                  )}
+                </div>
+                </div>
+              )}
             </Panel>
 
             {/* Thanks */}
